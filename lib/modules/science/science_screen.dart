@@ -10,8 +10,7 @@ Widget build(BuildContext context) {
       listener: (context, state) {},
       builder: (context, state) {
         var list = AppCubit.get(context).science;
-
-        return ArticleBuilder(list);
+        return ArticleBuilder(list,context);
       });
 }
 }

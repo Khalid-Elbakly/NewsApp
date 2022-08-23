@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsapp/modules/business/business_screen.dart';
 import 'package:newsapp/shared/cubit/states.dart';
+import 'package:newsapp/shared/network/local/cache_helper.dart';
 
 import '../../modules/science/science_screen.dart';
 import '../../modules/settings/settings_screen.dart';
@@ -19,16 +20,15 @@ class AppCubit extends Cubit<AppStates> {
     BottomNavigationBarItem(icon: Icon(Icons.business), label: "Business"),
     BottomNavigationBarItem(icon: Icon(Icons.sports), label: "Sports"),
     BottomNavigationBarItem(icon: Icon(Icons.science), label: "Science"),
-    BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Settings"),
   ];
 
   var CurrentIndex = 0;
 
   void onTapBottomNav(index) {
     CurrentIndex = index;
-    if(index == 1)
+    if (index == 1)
       getSportsData();
-    if(index == 2)
+    if (index == 2)
       getScienceData();
     emit(AppBottomNavState());
   }
@@ -37,7 +37,6 @@ class AppCubit extends Cubit<AppStates> {
     BuisnessScreen(),
     SportsScreen(),
     ScienceScreen(),
-    SettingsScreen(),
   ];
 
   List<dynamic> business = [];
@@ -59,23 +58,24 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
-    List<dynamic> sports = [];
+  List<dynamic> sports = [];
 
-    void getSportsData() {
-      emit(LoadingSportsState());
-      DioHelper.getData("/v2/top-headlines", {
-        "country": "eg",
-        "category": "sports",
-        "apiKey": "48283ee9bf36467c8f671e64ecf0f836",
-      }).then((value) {
-        sports = value.data['articles'];
-        emit(SportsSuccessState());
-      }).catchError((error) {
-        print(error);
-        emit(SportsErrorState(error.toString()));
-      });}
+  void getSportsData() {
+    emit(LoadingSportsState());
+    DioHelper.getData("/v2/top-headlines", {
+      "country": "eg",
+      "category": "sports",
+      "apiKey": "48283ee9bf36467c8f671e64ecf0f836",
+    }).then((value) {
+      sports = value.data['articles'];
+      emit(SportsSuccessState());
+    }).catchError((error) {
+      print(error);
+      emit(SportsErrorState(error.toString()));
+    });
+  }
 
-      List<dynamic> science = [];
+  List<dynamic> science = [];
 
   void getScienceData() {
     emit(LoadingScienceState());
@@ -90,5 +90,35 @@ class AppCubit extends Cubit<AppStates> {
       print(error);
       emit(ScienceErrorState(error.toString()));
     });
+  }
+
+  List<dynamic> search = [];
+
+  void getSearchData(String value) {
+    emit(LoadingSearchState());
+    // search = [];
+    DioHelper.getData("/v2/everything", {
+      "q": "$value",
+      "apiKey": "48283ee9bf36467c8f671e64ecf0f836",
+    }).then((value) {
+      search = value.data['articles'];
+      emit(SearchSuccessState());
+    }).catchError((error) {
+      print(error);
+      emit(SearchErrorState(error.toString()));
+    });
+  }
+
+  bool isDark = false;
+
+  void ChangeMode({var fromShared}) {
+    if (fromShared != null) {
+      isDark = fromShared;
+      emit(ChangeModeState());
+    } else {
+      isDark = !isDark;
+      CacheHelper.PutBooleon('isDark', isDark).then((value) =>
+          emit(ChangeModeState()));
+    }
   }
 }

@@ -12,7 +12,7 @@ Widget build(BuildContext context) {
       builder: (context, state) {
         var list = AppCubit.get(context).sports;
 
-        return ArticleBuilder(list);
+        return ArticleBuilder(list,context);
       });
 }
 }

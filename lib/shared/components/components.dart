@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:newsapp/shared/cubit/cubit.dart';
 import 'package:newsapp/shared/cubit/states.dart';
 
-Widget BuildArticleItem(article) {
+Widget BuildArticleItem(article,context) {
   return Padding(
     padding: const EdgeInsets.all(20.0),
     child: Row(
@@ -30,7 +30,7 @@ Widget BuildArticleItem(article) {
                 Expanded(
                     child: Text(
                   '${article["title"]}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: Theme.of(context).textTheme.bodyText1,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 3,
                 )),
@@ -55,12 +55,13 @@ Widget myDivider() {
   );
 }
 
-Widget ArticleBuilder(list){
+Widget ArticleBuilder(list,context){
         return ConditionalBuilder(
           condition: list.length > 0,
           builder: (context) =>
               ListView.separated(itemBuilder: (context, index) =>
-                  BuildArticleItem(list[index]),
+                  BuildArticleItem(list[index],context),
+                  physics: BouncingScrollPhysics(),
                   separatorBuilder: (context, index) => myDivider(),
                   itemCount: list.length),
           fallback: (context) => Center(child: CircularProgressIndicator()),);
