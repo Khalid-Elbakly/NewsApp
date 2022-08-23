@@ -17,7 +17,7 @@ class SearchScreen extends StatelessWidget {
           List<dynamic> list = AppCubit.get(context).search;
 
           return Scaffold(
-            appBar: AppBar(),
+            appBar: AppBar(title: Text('Search'),),
             body: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
